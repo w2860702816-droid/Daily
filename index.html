@@ -1,0 +1,1269 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>每日阅读清单 - 智慧媒体门户</title>
+    <meta name="description" content="29家权威媒体的每日精选阅读清单，按时间节奏优化的知识获取系统">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+```
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        color: #333;
+        line-height: 1.6;
+    }
+
+    .container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    .header {
+        text-align: center;
+        margin-bottom: 40px;
+        color: white;
+    }
+
+    .header h1 {
+        font-size: 3.2rem;
+        font-weight: 700;
+        margin-bottom: 15px;
+        text-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    }
+
+    .header p {
+        font-size: 1.3rem;
+        opacity: 0.9;
+        margin-bottom: 10px;
+    }
+
+    .current-time {
+        font-size: 1.1rem;
+        opacity: 0.8;
+        background: rgba(255,255,255,0.1);
+        padding: 10px 20px;
+        border-radius: 20px;
+        display: inline-block;
+        margin: 10px 0;
+    }
+
+    .time-period {
+        background: rgba(255, 255, 255, 0.97);
+        backdrop-filter: blur(15px);
+        border-radius: 25px;
+        padding: 35px;
+        margin-bottom: 35px;
+        box-shadow: 0 15px 40px rgba(0,0,0,0.12);
+        transition: all 0.4s ease;
+        border-left: 6px solid;
+    }
+
+    .time-period:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 25px 50px rgba(0,0,0,0.2);
+    }
+
+    .morning { border-left-color: #ff6b6b; }
+    .late-morning { border-left-color: #feca57; }
+    .noon { border-left-color: #48dbfb; }
+    .afternoon { border-left-color: #ff9ff3; }
+    .evening { border-left-color: #54a0ff; }
+
+    .period-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 25px;
+        gap: 15px;
+    }
+
+    .period-icon {
+        font-size: 2.5rem;
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    }
+
+    .period-info h2 {
+        font-size: 1.8rem;
+        color: #2c3e50;
+        margin-bottom: 8px;
+    }
+
+    .period-time {
+        font-size: 1.1rem;
+        color: #7f8c8d;
+        font-weight: 500;
+    }
+
+    .period-goal {
+        background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+        padding: 20px;
+        border-radius: 15px;
+        margin: 20px 0;
+        border-left: 4px solid #3498db;
+        font-style: italic;
+        color: #2c3e50;
+    }
+
+    .media-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+        gap: 20px;
+        margin-top: 25px;
+    }
+
+    .media-card {
+        background: white;
+        border-radius: 18px;
+        padding: 25px;
+        transition: all 0.3s ease;
+        border: 2px solid transparent;
+        position: relative;
+        overflow: hidden;
+        cursor: pointer;
+    }
+
+    .media-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 4px;
+        background: linear-gradient(90deg, #667eea, #764ba2);
+        transition: left 0.4s ease;
+    }
+
+    .media-card:hover::before {
+        left: 0;
+    }
+
+    .media-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+        border-color: #667eea;
+    }
+
+    .media-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 15px;
+    }
+
+    .media-name {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: #2c3e50;
+        margin-bottom: 5px;
+    }
+
+    .media-section {
+        font-size: 0.95rem;
+        color: #7f8c8d;
+        margin-bottom: 10px;
+    }
+
+    .reading-time {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+
+    .article-count {
+        color: #e74c3c;
+        font-weight: 600;
+        margin-bottom: 8px;
+    }
+
+    .keywords {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin: 15px 0;
+    }
+
+    .keyword {
+        background: linear-gradient(135deg, #f1f2f6, #ddd);
+        color: #2f3542;
+        padding: 5px 12px;
+        border-radius: 15px;
+        font-size: 0.8rem;
+        font-weight: 500;
+    }
+
+    .recommendation {
+        background: rgba(52, 152, 219, 0.1);
+        padding: 15px;
+        border-radius: 12px;
+        border-left: 3px solid #3498db;
+        margin-top: 15px;
+        font-style: italic;
+        color: #2c3e50;
+    }
+
+    .media-links {
+        display: flex;
+        gap: 10px;
+        margin-top: 15px;
+    }
+
+    .link-btn {
+        padding: 8px 16px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        text-decoration: none;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .link-btn:hover {
+        transform: scale(1.05);
+        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    }
+
+    .controls {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        display: flex;
+        gap: 10px;
+        z-index: 1000;
+    }
+
+    .control-btn {
+        background: rgba(255, 255, 255, 0.9);
+        border: none;
+        padding: 12px;
+        border-radius: 50%;
+        cursor: pointer;
+        font-size: 1.2rem;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+
+    .control-btn:hover {
+        background: white;
+        transform: scale(1.1);
+    }
+
+    .progress-bar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 0%;
+        height: 4px;
+        background: linear-gradient(90deg, #667eea, #764ba2);
+        transition: width 0.3s ease;
+        z-index: 1001;
+    }
+
+    .stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+        margin: 40px 0;
+    }
+
+    .stat-card {
+        background: rgba(255, 255, 255, 0.95);
+        padding: 25px;
+        border-radius: 18px;
+        text-align: center;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+    }
+
+    .stat-number {
+        font-size: 2.5rem;
+        font-weight: bold;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .stat-label {
+        color: #7f8c8d;
+        margin-top: 8px;
+        font-weight: 500;
+    }
+
+    @media (max-width: 768px) {
+        .header h1 { font-size: 2.2rem; }
+        .media-grid { grid-template-columns: 1fr; }
+        .time-period { padding: 25px; }
+        .controls { position: relative; top: auto; right: auto; margin: 20px 0; justify-content: center; }
+    }
+
+    .completed {
+        opacity: 0.6;
+        background: linear-gradient(135deg, #ddd, #bbb) !important;
+    }
+
+    .completed .media-card {
+        background: #f8f9fa;
+    }
+
+    .footer {
+        text-align: center;
+        margin-top: 50px;
+        padding: 30px;
+        color: rgba(255, 255, 255, 0.9);
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 20px;
+        backdrop-filter: blur(10px);
+    }
+</style>
+```
+
+</head>
+<body>
+    <div class="progress-bar" id="progressBar"></div>
+
+```
+<div class="controls">
+    <button class="control-btn" onclick="toggleDarkMode()" title="切换主题">🌙</button>
+    <button class="control-btn" onclick="resetProgress()" title="重置进度">🔄</button>
+    <button class="control-btn" onclick="exportProgress()" title="导出进度">📊</button>
+</div>
+
+<div class="container">
+    <div class="header">
+        <h1>📚 每日阅读清单</h1>
+        <p>29家权威媒体 × 智能时间分配 × 深度知识获取</p>
+        <div class="current-time" id="currentTime"></div>
+    </div>
+
+    <div class="stats">
+        <div class="stat-card">
+            <div class="stat-number">29</div>
+            <div class="stat-label">权威媒体</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">4-6</div>
+            <div class="stat-label">小时阅读</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">45+</div>
+            <div class="stat-label">精选文章</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number" id="completionRate">0%</div>
+            <div class="stat-label">今日完成</div>
+        </div>
+    </div>
+
+    <!-- 早晨时段 -->
+    <div class="time-period morning">
+        <div class="period-header">
+            <div class="period-icon">🌅</div>
+            <div class="period-info">
+                <h2>早晨 - 全球格局 & 理性启动</h2>
+                <div class="period-time">7:00 - 10:00</div>
+            </div>
+        </div>
+        <div class="period-goal">
+            <strong>目标：</strong>迅速获取世界新闻全貌，并用科学文章激活理性思维
+        </div>
+        
+        <div class="media-grid">
+            <div class="media-card" data-media="reuters">
+                <div class="media-header">
+                    <div>
+                        <div class="media-name">Reuters 路透社</div>
+                        <div class="media-section">全球即时新闻</div>
+                        <div class="article-count">推荐阅读：3-5篇</div>
+                    </div>
+                    <div class="reading-time">15分钟</div>
+                </div>
+                <div class="keywords">
+                    <span class="keyword">国际政治</span>
+                    <span class="keyword">突发新闻</span>
+                    <span class="keyword">全球经济</span>
+                </div>
+                <div class="recommendation">
+                    最权威的国际新闻源，无偏见快速了解世界大事
+                </div>
+                <div class="media-links">
+                    <a href="https://www.reuters.com/world/" class="link-btn" target="_blank">World News</a>
+                    <a href="https://www.reuters.com/business/" class="link-btn" target="_blank">Business</a>
+                </div>
+            </div>
+
+            <div class="media-card" data-media="ap">
+                <div class="media-header">
+                    <div>
+                        <div class="media-name">AP 美联社</div>
+                        <div class="media-section">国际快讯补充</div>
+                        <div class="article-count">推荐阅读：2-3篇</div>
+                    </div>
+                    <div class="reading-time">10分钟</div>
+                </div>
+                <div class="keywords">
+                    <span class="keyword">美国政治</span>
+                    <span class="keyword">国际关系</span>
+                    <span class="keyword">社会议题</span>
+                </div>
+                <div class="recommendation">
+                    补充路透社视角，获得更全面的新闻图景
+                </div>
+                <div class="media-links">
+                    <a href="https://apnews.com/politics" class="link-btn" target="_blank">Politics</a>
+                    <a href="https://apnews.com/world-news" class="link-btn" target="_blank">World</a>
+                </div>
+            </div>
+
+            <div class="media-card" data-media="bloomberg">
+                <div class="media-header">
+                    <div>
+                        <div class="media-name">Bloomberg 彭博</div>
+                        <div class="media-section">市场早报 & 财经要闻</div>
+                        <div class="article-count">推荐阅读：2-3篇</div>
+                    </div>
+                    <div class="reading-time">12分钟</div>
+                </div>
+                <div class="keywords">
+                    <span class="keyword">金融市场</span>
+                    <span class="keyword">经济数据</span>
+                    <span class="keyword">投资趋势</span>
+                </div>
+                <div class="recommendation">
+                    最专业的财经早报，把握全球市场脉搏
+                </div>
+                <div class="media-links">
+                    <a href="https://www.bloomberg.com/markets" class="link-btn" target="_blank">Markets</a>
+                    <a href="https://www.bloomberg.com/opinion" class="link-btn" target="_blank">Opinion</a>
+                </div>
+            </div>
+
+            <div class="media-card" data-media="ft">
+                <div class="media-header">
+                    <div>
+                        <div class="media-name">Financial Times 金融时报</div>
+                        <div class="media-section">FirstFT & Lex</div>
+                        <div class="article-count">推荐阅读：2篇</div>
+                    </div>
+                    <div class="reading-time">15分钟</div>
+                </div>
+                <div class="keywords">
+                    <span class="keyword">投资分析</span>
+                    <span class="keyword">经济政策</span>
+                    <span class="keyword">商业策略</span>
+                </div>
+                <div class="recommendation">
+                    英国视角的精深财经分析，Lex专栏尤其精彩
+                </div>
+                <div class="media-links">
+                    <a href="https://www.ft.com/lex" class="link-btn" target="_blank">Lex</a>
+                    <a href="https://www.ft.com/world" class="link-btn" target="_blank">World</a>
+                </div>
+            </div>
+
+            <div class="media-card" data-media="wsj">
+                <div class="media-header">
+                    <div>
+                        <div class="media-name">Wall Street Journal 华尔街日报</div>
+                        <div class="media-section">What's News & Markets</div>
+                        <div class="article-count">推荐阅读：2-3篇</div>
+                    </div>
+                    <div class="reading-time">15分钟</div>
+                </div>
+                <div class="keywords">
+                    <span class="keyword">美股市场</span>
+                    <span class="keyword">商业新闻</span>
+                    <span class="keyword">政策影响</span>
+                </div>
+                <div class="recommendation">
+                    美国商业世界的权威声音，市场分析最为精准
+                </div>
+                <div class="media-links">
+                    <a href="https://www.wsj.com/news/whats-news" class="link-btn" target="_blank">What's News</a>
+                    <a href="https://www.wsj.com/markets" class="link-btn" target="_blank">Markets</a>
+                </div>
+            </div>
+
+            <div class="media-card" data-media="sciam">
+                <div class="media-header">
+                    <div>
+                        <div class="media-name">Scientific American 科学美国人</div>
+                        <div class="media-section">科学短文/专栏</div>
+                        <div class="article-count">推荐阅读：1篇</div>
+                    </div>
+                    <div class="reading-time">20分钟</div>
+                </div>
+                <div class="keywords">
+                    <span class="keyword">前沿科学</span>
+                    <span class="keyword">理性思维</span>
+                    <span class="keyword">科技趋势</span>
+                </div>
+                <div class="recommendation">
+                    用科学文章激活大脑的理性思维模式
+                </div>
+                <div class="media-links">
+                    <a href="https://www.scientificamerican.com/" class="link-btn" target="_blank">Latest</a>
+                    <a href="https://www.scientificamerican.com/section/opinion/" class="link-btn" target="_blank">Opinion</a>
+                </div>
+            </div>
+
+            <div class="media-card" data-media="times">
+                <div class="media-header">
+                    <div>
+                        <div class="media-name">The Times 泰晤士报</div>
+                        <div class="media-section">英国政经综览</div>
+                        <div class="article-count">推荐阅读：1-2篇</div>
+                    </div>
+                    <div class="reading-time">12分钟</div>
+                </div>
+                <div class="keywords">
+                    <span class="keyword">英国政治</span>
+                    <span class="keyword">欧洲事务</span>
+                    <span class="keyword">外交政策</span>
+                </div>
+                <div class="recommendation">
+                    了解英国及欧洲政经动态的重要窗口
+                </div>
+                <div class="media-links">
+                    <a href="https://www.thetimes.com/uk/politics" class="link-btn" target="_blank">Politics</a>
+                    <a href="https://www.thetimes.com/world" class="link-btn" target="_blank">World</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 上午晚些 -->
+    <div class="time-period late-morning">
+        <div class="period-header">
+            <div class="period-icon">☀️</div>
+            <div class="period-info">
+                <h2>上午晚些 - 深入新闻背景 + 哲学热身</h2>
+                <div class="period-time">10:00 - 12:00</div>
+            </div>
+        </div>
+        <div class="period-goal">
+            <strong>目标：</strong>加深对早间新闻的理解，并用哲学小品文转换思维角度
+        </div>
+        
+        <div class="media-grid">
+            <div class="media-card" data-media="guardian">
+                <div class="media-header">
+                    <div>
+                        <div class="media-name">The Guardian 卫报</div>
+                        <div class="media-section">Analysis 或深度调查</div>
+                        <div class="article-count">推荐阅读：1-2篇</div>
+                    </div>
+                    <div class="reading-time">20分钟</div>
+                </div>
+                <div class="keywords">
+                    <span class="keyword">深度调查</span>
+                    <span class="keyword">社会正义</span>
+                    <span class="keyword">环境议题</span>
+                </div>
+                <div class="recommendation">
+                    左派视角的深度分析，社会议题报道尤其出色
+                </div>
+                <div class="media-links">
+                    <a href="https://www.theguardian.com/world" class="link-btn" target="_blank">World</a>
+                    <a href="https://www.theguardian.com/commentisfree" class="link-btn" target="_blank">Opinion</a>
+                </div>
+            </div>
+
+            <div class="media-card" data-media="independent">
+                <div class="media-header">
+                    <div>
+                        <div class="media-name">The Independent 独立报</div>
+                        <div class="media-section">社会与国际专题</div>
+                        <div class="article-count">推荐阅读：1篇</div>
+                    </div>
+                    <div class="reading-time">15分钟</div>
+                </div>
+                <div class="keywords">
+                    <span class="keyword">独立视角</span>
+                    <span class="keyword">国际事务</span>
+                    <span class="keyword">社会评论</span>
+                </div>
+                <div class="recommendation">
+                    独立的政治立场，提供不同的观察角度
+                </div>
+                <div class="media-links">
+                    <a href="https://www.independent.co.uk/news/world" class="link-btn" target="_blank">World</a>
+                    <a href="https://www.independent.co.uk/voices" class="link-btn" target="_blank">Voices</a>
+                </div>
+            </div>
+
+            <div class="media-card" data-media="telegraph">
+                <div class="media-header">
+                    <div>
+                        <div class="media-name">The Telegraph 每日电讯报</div>
+                        <div class="media-section">政策与经济分析</div>
+                        <div class="article-count">推荐阅读：1篇</div>
+                    </div>
+                    <div class="reading-time">12分钟</div>
+                </div>
+                <div class="keywords">
+                    <span class="keyword">保守主义</span>
+                    <span class="keyword">经济政策</span>
+                    <span class="keyword">传统价值</span>
+                </div>
+                <div class="recommendation">
+                    保守派立场的政策分析，平衡不同观点
+                </div>
+                <div class="media-links">
+                    <a href="https://www.telegraph.co.uk/politics/" class="link-btn" target="_blank">Politics</a>
+                    <a href="https://www.telegraph.co.uk/business/" class="link-btn" target="_blank">Business</a>
+                </div>
+            </div>
+
+            <div class="media-card" data-media="spectator">
+                <div class="media-header">
+                    <div>
+                        <div class="media-name">The Spectator 旁观者</div>
+                        <div class="media-section">政治评论</div>
+                        <div class="article-count">推荐阅读：1篇</div>
+                    </div>
+                    <div class="reading-time">15分钟</div>
+                </div>
+                <div class="keywords">
+                    <span class="keyword">政治评论</span>
+                    <span class="keyword">文化批评</span>
+                    <span class="keyword">智识思辨</span>
+                </div>
+                <div class="recommendation">
+                    英国最古老的周刊，犀利的政治和文化评论
+                </div>
+                <div class="media-links">
+                    <a href="https://www.spectator.co.uk/" class="link-btn" target="_blank">Latest</a>
+                    <a href="https://www.spectator.co.uk/topic/politics" class="link-btn" target="_blank">Politics</a>
+                </div>
+            </div>
+
+            <div class="media-card" data-media="csmonitor">
+                <div class="media-header">
+                    <div>
+                        <div class="media-name">Christian Science Monitor</div>
+                        <div class="media-section">冷门深度报道</div>
+                        <div class="article-count">推荐阅读：1篇</div>
+                    </div>
+                    <div class="reading-time">18分钟</div>
+                </div>
+                <div class="keywords">
+                    <span class="keyword">建设性新闻</span>
+                    <span class="keyword">深度报道</span>
+                    <span class="keyword">解决方案</span>
+                </div>
+                <div class="recommendation">
+                    独特的建设性新闻理念，关注解决方案而非问题
+                </div>
+                <div class="media-links">
+                    <a href="https://www.csmonitor.com/" class="link-btn" target="_blank">Latest</a>
+                    <a href="https://www.csmonitor.com/World" class="link-btn" target="_blank">World</a>
+                </div>
+            </div>
+
+            <div class="media-card" data-media="philnow">
+                <div class="media-header">
+                    <div>
+                        <div class="media-name">Philosophy Now</div>
+                        <div class="media-section">简短哲学评论/随笔</div>
+                        <div class="article-count">推荐阅读：1篇</div>
+                    </div>
+                    <div class="reading-time">10分钟</div>
+                </div>
+                <div class="keywords">
+                    <span class="keyword">哲学思辨</span>
+                    <span class="keyword">理性分析</span>
+                    <span class="keyword">思维训练</span>
+                </div>
+                <div class="recommendation">
+                    用哲学小品文为大脑预热，准备更深层的思考
+                </div>
+                <div class="media-links">
+                    <a href="https://philosophynow.org/" class="link-btn" target="_blank">Latest</a>
+                    <a href="https://philosophynow.org/issues" class="link-btn" target="_blank">Issues</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 中午时段 -->
+    <div class="time-period noon">
+        <div class="period-header">
+            <div class="period-icon">🌞</div>
+            <div class="period-info">
+                <h2>中午 - 社会文化 & 心理洞察</h2>
+                <div class="period-time">12:30 - 14:30</div>
+            </div>
+        </div>
+        <div class="period-goal">
+            <strong>目标：</strong>切换到文化、心理与人文议题，让阅读更贴近日常生活感受
+        </div>
+        
+        <div class="media-grid">
+            <div class="media-card" data-media="economist">
+                <div class="media-header">
+                    <div>
+                        <div class="media-name">The Economist 经济学人</div>
+                        <div class="media-section">当期重点文章</div>
+                        <div class="article-count">推荐阅读：1-2篇</div>
+                    </div>
+                    <div class="reading-time">25分钟</div>
+                </div>
+                <div class="keywords">
+                    <span class="keyword">全球视野</span>
+                    <span class="keyword">政策分析</span>
+                    <span class="keyword">经济趋势</span>
+                </div>
+                <div class="recommendation">
+                    最权威的周刊之一，深度分析全球政经趋势
+                </div>
+                <div class="media-links">
+                    <a href="https://www.economist.com/" class="link-btn" target="_blank">Latest</a>
+                    <a href="https://www.economist.com/leaders" class="link-btn" target="_blank">Leaders</a>
+                </div>
+            </div>
+
+            <div class="media-card" data-media="atlantic">
+                <div class="media-header">
+                    <div>
+                        <div class="media-name">The Atlantic 大西洋月刊</div>
+                        <div class="media-section">文化/社会长文</div>
+                        <div class="article-count">推荐阅读：1篇</div>
+                    </div>
+                    <div class="reading-time">30分钟</div>
+                </div>
+                <div class="keywords">
+                    <span class="keyword">深度特写</span>
+                    <span class="keyword">社会议题</span>
+                    <span class="keyword">文化分析</span>
+                </div>
+                <div class="recommendation">
+                    美国最佳长篇特写，深入探讨社会文化现象
+                </div>
+                <div class="media-links">
+                    <a href="https://www.theatlantic.com/" class="link-btn" target="_blank">Latest</a>
+                    <a href="https://www.theatlantic.com/culture/" class="link-btn" target="_blank">Culture</a>
+                </div>
+            </div>
+
+            <div class="media-card" data-media="newyorker">
+                <div class="media-header">
+                    <div>
+                        <div class="media-name">The New Yorker 纽约客</div>
+                        <div class="media-section">人物特写或文化随笔</div>
+                        <div class="article-count">推荐阅读：1篇</div>
+                    </div>
+                    <div class="reading-time">25分钟</div>
+                </div>
+                <div class="keywords">
+                    <span class="keyword">人物故事</span>
+                    <span class="keyword">城市文化</span>
+                    <span class="keyword">艺术评论</span>
+                </div>
+                <div class="recommendation">
+                    精致的文化杂志，人物特写和随笔文学性很强
+                </div>
+                <div class="media-links">
+                    <a href="https://www.newyorker.com/" class="link-btn" target="_blank">Latest</a>
+                    <a href="https://www.newyorker.com/culture" class="link-btn" target="_blank">Culture</a>
+                </div>
+            </div>
+
+            <div class="media-card" data-media="psychtoday">
+                <div class="media-header">
+                    <div>
+                        <div class="media-name">Psychology Today</div>
+                        <div class="media-section">当期心理专题</div>
+                        <div class="article-count">推荐阅读：1篇</div>
+                    </div>
+                    <div class="reading-time">15分钟</div>
+                </div>
+                <div class="keywords">
+                    <span class="keyword">心理学</span>
+                    <span class="keyword">行为科学</span>
+                    <span class="keyword">心理健康</span>
+                </div>
+                <div class="recommendation">
+                    了解人类行为和心理机制的权威平台
+                </div>
+                <div class="media-links">
+                    <a href="https://www.psychologytoday.com/" class="link-btn" target="_blank">Latest</a>
+                    <a href="https://www.psychologytoday.com/topics" class="link-btn" target="_blank">Topics</a>
+                </div>
+            </div>
+
+            <div class="media-card" data-media="psychologies">
+                <div class="media-header">
+                    <div>
+                        <div class="media-name">Psychologies</div>
+                        <div class="media-section">生活化心理话题</div>
+                        <div class="article-count">推荐阅读：1篇</div>
+                    </div>
+                    <div class="reading-time">12分钟</div>
+                </div>
+                <div class="keywords">
+                    <span class="keyword">生活心理</span>
+                    <span class="keyword">人际关系</span>
+                    <span class="keyword">个人成长</span>
+                </div>
+                <div class="recommendation">
+                    更贴近日常生活的心理学应用和自我提升
+                </div>
+                <div class="media-links">
+                    <a href="https://www.psychologies.co.uk/" class="link-btn" target="_blank">Latest</a>
+                    <a href="https://www.psychologies.co.uk/wellbeing" class="link-btn" target="_blank">Wellbeing</a>
+                </div>
+            </div>
+
+            <div class="media-card" data-media="monocle">
+                <div class="media-header">
+                    <div>
+                        <div class="media-name">Monocle</div>
+                        <div class="media-section">城市、设计、生活方式</div>
+                        <div class="article-count">推荐阅读：1篇</div>
+                    </div>
+                    <div class="reading-time">20分钟</div>
+                </div>
+                <div class="keywords">
+                    <span class="keyword">城市文化</span>
+                    <span class="keyword">设计美学</span>
+                    <span class="keyword">生活品质</span>
+                </div>
+                <div class="recommendation">
+                    高品质的生活方式杂志，视觉和内容都很精美
+                </div>
+                <div class="media-links">
+                    <a href="https://monocle.com/" class="link-btn" target="_blank">Latest</a>
+                    <a href="https://monocle.com/magazine/" class="link-btn" target="_blank">Magazine</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 下午时段 -->
+    <div class="time-period afternoon">
+        <div class="period-header">
+            <div class="period-icon">🌤️</div>
+            <div class="period-info">
+                <h2>下午 - 多视角评论 & 深度思辨</h2>
+                <div class="period-time">15:00 - 17:00</div>
+            </div>
+        </div>
+        <div class="period-goal">
+            <strong>目标：</strong>吸收不同政治立场与跨学科的思想火花
+        </div>
+        
+        <div class="media-grid">
+            <div class="media-card" data-media="nationalreview">
+                <div class="media-header">
+                    <div>
+                        <div class="media-name">National Review</div>
+                        <div class="media-section">保守派评论</div>
+                        <div class="article-count">推荐阅读：1篇</div>
+                    </div>
+                    <div class="reading-time">15分钟</div>
+                </div>
+                <div class="keywords">
+                    <span class="keyword">保守主义</span>
+                    <span class="keyword">政治评论</span>
+                    <span class="keyword">传统价值</span>
+                </div>
+                <div class="recommendation">
+                    美国保守派思想重镇，了解右翼观点的重要窗口
+                </div>
+                <div class="media-links">
+                    <a href="https://www.nationalreview.com/" class="link-btn" target="_blank">Latest</a>
+                    <a href="https://www.nationalreview.com/corner/" class="link-btn" target="_blank">The Corner</a>
+                </div>
+            </div>
+
+            <div class="media-card" data-media="nation">
+                <div class="media-header">
+                    <div>
+                        <div class="media-name">The Nation</div>
+                        <div class="media-section">左派评论</div>
+                        <div class="article-count">推荐阅读：1篇</div>
+                    </div>
+                    <div class="reading-time">15分钟</div>
+                </div>
+                <div class="keywords">
+                    <span class="keyword">进步主义</span>
+                    <span class="keyword">社会正义</span>
+                    <span class="keyword">左翼政治</span>
+                </div>
+                <div class="recommendation">
+                    美国最古老的左派杂志，平衡保守派的观点
+                </div>
+                <div class="media-links">
+                    <a href="https://www.thenation.com/" class="link-btn" target="_blank">Latest</a>
+                    <a href="https://www.thenation.com/politics/" class="link-btn" target="_blank">Politics</a>
+                </div>
+            </div>
+
+            <div class="media-card" data-media="jacobin">
+                <div class="media-header">
+                    <div>
+                        <div class="media-name">Jacobin</div>
+                        <div class="media-section">激进左派/社会运动</div>
+                        <div class="article-count">推荐阅读：1篇</div>
+                    </div>
+                    <div class="reading-time">18分钟</div>
+                </div>
+                <div class="keywords">
+                    <span class="keyword">社会主义</span>
+                    <span class="keyword">劳工权益</span>
+                    <span class="keyword">激进思想</span>
+                </div>
+                <div class="recommendation">
+                    更激进的左翼视角，挑战主流思维的边界
+                </div>
+                <div class="media-links">
+                    <a href="https://jacobin.com/" class="link-btn" target="_blank">Latest</a>
+                    <a href="https://jacobin.com/politics" class="link-btn" target="_blank">Politics</a>
+                </div>
+            </div>
+
+            <div class="media-card" data-media="critic">
+                <div class="media-header">
+                    <div>
+                        <div class="media-name">The Critic</div>
+                        <div class="media-section">文化与思想评论</div>
+                        <div class="article-count">推荐阅读：1篇</div>
+                    </div>
+                    <div class="reading-time">20分钟</div>
+                </div>
+                <div class="keywords">
+                    <span class="keyword">文化批评</span>
+                    <span class="keyword">知识分子</span>
+                    <span class="keyword">思想史</span>
+                </div>
+                <div class="recommendation">
+                    新兴的文化评论杂志，高质量的思想性文章
+                </div>
+                <div class="media-links">
+                    <a href="https://thecritic.co.uk/" class="link-btn" target="_blank">Latest</a>
+                    <a href="https://thecritic.co.uk/culture/" class="link-btn" target="_blank">Culture</a>
+                </div>
+            </div>
+
+            <div class="media-card" data-media="newphil">
+                <div class="media-header">
+                    <div>
+                        <div class="media-name">New Philosopher</div>
+                        <div class="media-section">当期核心哲学主题长文</div>
+                        <div class="article-count">推荐阅读：1篇</div>
+                    </div>
+                    <div class="reading-time">25分钟</div>
+                </div>
+                <div class="keywords">
+                    <span class="keyword">当代哲学</span>
+                    <span class="keyword">生活智慧</span>
+                    <span class="keyword">思辨方法</span>
+                </div>
+                <div class="recommendation">
+                    现代人的哲学指南，将深奥理论与现实生活结合
+                </div>
+                <div class="media-links">
+                    <a href="https://www.newphilosopher.com/" class="link-btn" target="_blank">Latest</a>
+                    <a href="https://www.newphilosopher.com/issues/" class="link-btn" target="_blank">Issues</a>
+                </div>
+            </div>
+
+            <div class="media-card" data-media="noema">
+                <div class="media-header">
+                    <div>
+                        <div class="media-name">Noema</div>
+                        <div class="media-section">全球化、未来趋势与跨领域思想</div>
+                        <div class="article-count">推荐阅读：1篇</div>
+                    </div>
+                    <div class="reading-time">30分钟</div>
+                </div>
+                <div class="keywords">
+                    <span class="keyword">未来研究</span>
+                    <span class="keyword">全球治理</span>
+                    <span class="keyword">跨学科</span>
+                </div>
+                <div class="recommendation">
+                    贝佐斯支持的思想平台，探讨人类文明的未来
+                </div>
+                <div class="media-links">
+                    <a href="https://www.noemamag.com/" class="link-btn" target="_blank">Latest</a>
+                    <a href="https://www.noemamag.com/topics/" class="link-btn" target="_blank">Topics</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 晚上时段 -->
+    <div class="time-period evening">
+        <div class="period-header">
+            <div class="period-icon">🌙</div>
+            <div class="period-info">
+                <h2>晚上 - 沉浸式文学 & 哲学收尾</h2>
+                <div class="period-time">19:00 - 22:00</div>
+            </div>
+        </div>
+        <div class="period-goal">
+            <strong>目标：</strong>用长篇与哲学性阅读安静收尾，深化白天吸收的思考
+        </div>
+        
+        <div class="media-grid">
+            <div class="media-card" data-media="lrb">
+                <div class="media-header">
+                    <div>
+                        <div class="media-name">London Review of Books</div>
+                        <div class="media-section">长篇书评/文学随笔</div>
+                        <div class="article-count">推荐阅读：1篇</div>
+                    </div>
+                    <div class="reading-time">35分钟</div>
+                </div>
+                <div class="keywords">
+                    <span class="keyword">文学批评</span>
+                    <span class="keyword">书评随笔</span>
+                    <span class="keyword">知识分子</span>
+                </div>
+                <div class="recommendation">
+                    英国最权威的文学评论，长篇书评极具深度
+                </div>
+                <div class="media-links">
+                    <a href="https://www.lrb.co.uk/" class="link-btn" target="_blank">Latest</a>
+                    <a href="https://www.lrb.co.uk/archive" class="link-btn" target="_blank">Archive</a>
+                </div>
+            </div>
+
+            <div class="media-card" data-media="nyrb">
+                <div class="media-header">
+                    <div>
+                        <div class="media-name">New York Review of Books</div>
+                        <div class="media-section">文化史、哲学、文学评论</div>
+                        <div class="article-count">推荐阅读：1篇</div>
+                    </div>
+                    <div class="reading-time">40分钟</div>
+                </div>
+                <div class="keywords">
+                    <span class="keyword">学术评论</span>
+                    <span class="keyword">文化史</span>
+                    <span class="keyword">哲学思辨</span>
+                </div>
+                <div class="recommendation">
+                    美国知识分子的重镇，深度书评和文化评论
+                </div>
+                <div class="media-links">
+                    <a href="https://www.nybooks.com/" class="link-btn" target="_blank">Latest</a>
+                    <a href="https://www.nybooks.com/articles/" class="link-btn" target="_blank">Articles</a>
+                </div>
+            </div>
+
+            <div class="media-card" data-media="tls">
+                <div class="media-header">
+                    <div>
+                        <div class="media-name">Times Literary Supplement</div>
+                        <div class="media-section">文学与人文批评</div>
+                        <div class="article-count">推荐阅读：1篇</div>
+                    </div>
+                    <div class="reading-time">30分钟</div>
+                </div>
+                <div class="keywords">
+                    <span class="keyword">文学批评</span>
+                    <span class="keyword">人文学科</span>
+                    <span class="keyword">文化评论</span>
+                </div>
+                <div class="recommendation">
+                    百年历史的文学周刊，人文学科的权威声音
+                </div>
+                <div class="media-links">
+                    <a href="https://www.the-tls.co.uk/" class="link-btn" target="_blank">Latest</a>
+                    <a href="https://www.the-tls.co.uk/categories/fiction/" class="link-btn" target="_blank">Fiction</a>
+                </div>
+            </div>
+
+            <div class="media-card" data-media="aeon">
+                <div class="media-header">
+                    <div>
+                        <div class="media-name">Aeon</div>
+                        <div class="media-section">长篇哲学/人文/科学随笔</div>
+                        <div class="article-count">推荐阅读：1篇</div>
+                    </div>
+                    <div class="reading-time">25分钟</div>
+                </div>
+                <div class="keywords">
+                    <span class="keyword">哲学随笔</span>
+                    <span class="keyword">科学人文</span>
+                    <span class="keyword">思想实验</span>
+                </div>
+                <div class="recommendation">
+                    完美的夜晚读物，深度哲学思考的理想结尾
+                </div>
+                <div class="media-links">
+                    <a href="https://aeon.co/" class="link-btn" target="_blank">Latest</a>
+                    <a href="https://aeon.co/philosophy" class="link-btn" target="_blank">Philosophy</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <h3>🎯 每日阅读完成!</h3>
+        <p>恭喜您完成了今天的知识之旅</p>
+        <p>明天继续探索世界的复杂与美好</p>
+    </div>
+</div>
+
+<script>
+    // 实时时钟
+    function updateTime() {
+        const now = new Date();
+        const timeString = now.toLocaleString('zh-CN', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            weekday: 'long',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+        document.getElementById('currentTime').textContent = timeString;
+    }
+
+    // 阅读进度跟踪
+    let completedItems = JSON.parse(localStorage.getItem('dailyReadingProgress') || '[]');
+    
+    function updateProgress() {
+        const totalItems = document.querySelectorAll('.media-card').length;
+        const completedCount = completedItems.length;
+        const percentage = Math.round((completedCount / totalItems) * 100);
+        
+        document.getElementById('completionRate').textContent = percentage + '%';
+        document.getElementById('progressBar').style.width = percentage + '%';
+        
+        // 更新视觉状态
+        document.querySelectorAll('.media-card').forEach(card => {
+            const mediaId = card.getAttribute('data-media');
+            if (completedItems.includes(mediaId)) {
+                card.classList.add('completed');
+            } else {
+                card.classList.remove('completed');
+            }
+        });
+    }
+
+    // 点击卡片标记完成
+    document.querySelectorAll('.media-card').forEach(card => {
+        card.addEventListener('click', function(e) {
+            // 如果点击的是链接，不执行标记逻辑
+            if (e.target.closest('.link-btn')) return;
+            
+            const mediaId = this.getAttribute('data-media');
+            const index = completedItems.indexOf(mediaId);
+            
+            if (index > -1) {
+                completedItems.splice(index, 1);
+                this.classList.remove('completed');
+            } else {
+                completedItems.push(mediaId);
+                this.classList.add('completed');
+            }
+            
+            localStorage.setItem('dailyReadingProgress', JSON.stringify(completedItems));
+            updateProgress();
+        });
+    });
+
+    // 控制按钮功能
+    function toggleDarkMode() {
+        document.body.classList.toggle('dark-mode');
+    }
+
+    function resetProgress() {
+        if (confirm('确定要重置今日阅读进度吗？')) {
+            completedItems = [];
+            localStorage.removeItem('dailyReadingProgress');
+            updateProgress();
+        }
+    }
+
+    function exportProgress() {
+        const data = {
+            date: new Date().toISOString().split('T')[0],
+            completed: completedItems.length,
+            total: document.querySelectorAll('.media-card').length,
+            items: completedItems
+        };
+        
+        const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `reading-progress-${data.date}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }
+
+    // 根据时间高亮当前时段
+    function highlightCurrentPeriod() {
+        const hour = new Date().getHours();
+        const periods = document.querySelectorAll('.time-period');
+        
+        periods.forEach(period => period.classList.remove('current-period'));
+        
+        let currentPeriod;
+        if (hour >= 7 && hour < 10) {
+            currentPeriod = document.querySelector('.morning');
+        } else if (hour >= 10 && hour < 12) {
+            currentPeriod = document.querySelector('.late-morning');
+        } else if (hour >= 12.5 && hour < 14.5) {
+            currentPeriod = document.querySelector('.noon');
+        } else if (hour >= 15 && hour < 17) {
+            currentPeriod = document.querySelector('.afternoon');
+        } else if (hour >= 19 && hour < 22) {
+            currentPeriod = document.querySelector('.evening');
+        }
+        
+        if (currentPeriod) {
+            currentPeriod.classList.add('current-period');
+            currentPeriod.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+    }
+
+    // 初始化
+    updateTime();
+    updateProgress();
+    highlightCurrentPeriod();
+    setInterval(updateTime, 60000); // 每分钟更新时间
+
+    // 添加当前时段样式
+    const style = document.createElement('style');
+    style.textContent = `
+        .current-period {
+            box-shadow: 0 25px 50px rgba(102, 126, 234, 0.3) !important;
+            transform: scale(1.02);
+            border-left-width: 8px !important;
+        }
+    `;
+    document.head.appendChild(style);
+</script>
+```
+
+</body>
+</html>
